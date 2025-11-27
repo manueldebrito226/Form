@@ -1,6 +1,5 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const pool = require("./db");
 const path = require("path");
 const app = express();
 const nodemailer = require("nodemailer");
@@ -12,23 +11,6 @@ app.use(express.static("public"));
 app.get("/", (req, res) => {
      res.sendFile(__dirname, + "public", "index.html");
 });
-
-app.post("/enviar", async (req, res) =>{
-     const { Nome, Idade, Email, Telefone, Pretende, Instituicao, Saber, Comentarios } = req.body;
-
-    try {
-        const result = await pool.query(
-            "INSERT INTO cad (nome, idade, email, numero, visao, resultados, como_soube, comentarios) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
-            [Nome, Idade, Email, Telefone, Pretende, Instituicao, Saber, Comentarios]
-        );
-        console.log("Novo Cadástro:", result.rows[0]);
-        res.send("Dados recebidos com sucesso!");
-    } catch (err) {
-        console.error("Erro ao inserir dados:", err);
-        res.status(500).send("Erro ao processar sua solicitação.");
-    }
-});
-
 
 // Rota para enviar email
 app.post("/send-email", async (req, res) => {
